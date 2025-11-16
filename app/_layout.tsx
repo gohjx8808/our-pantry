@@ -11,7 +11,7 @@ import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
 import * as SQLite from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { View } from "react-native";
+import Entypo from "@expo/vector-icons/Entypo";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import migrations from "../drizzle/migrations";
 import { useEffect, useState } from "react";
@@ -24,6 +24,7 @@ import {
 import { Text } from "@/components/ui/text";
 import { Spinner } from "@/components/ui/spinner";
 import { VStack } from "@/components/ui/vstack";
+import { Center } from "@/components/ui/center";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -37,22 +38,20 @@ export default function RootLayout() {
 
   const { success, error } = useMigrations(db, migrations);
   const [isMigrating, setIsMigrating] = useState(false);
+  const [isMigrationError, setMigrationError] = useState(false);
 
   useEffect(() => {
-    if (!success && !error) {
-      setIsMigrating(true);
-    } else {
+    if (error) {
+      setMigrationError(true);
       setIsMigrating(false);
+    } else {
+      if (!success) {
+        setIsMigrating(true);
+      } else {
+        setIsMigrating(false);
+      }
     }
   }, [error, success]);
-
-  if (error) {
-    return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
 
   return (
     <GluestackUIProvider mode="dark">
@@ -65,6 +64,7 @@ export default function RootLayout() {
           />
         </Stack>
         <StatusBar style="auto" />
+        {/* db migration in progress dialog */}
         <AlertDialog isOpen={isMigrating} closeOnOverlayClick={false}>
           <AlertDialogBackdrop />
           <AlertDialogContent>
@@ -73,6 +73,23 @@ export default function RootLayout() {
                 <Spinner />
                 <Text className="text-center">
                   Please wait for a moment. Database migration is in progress.
+                </Text>
+              </VStack>
+            </AlertDialogBody>
+          </AlertDialogContent>
+        </AlertDialog>
+        {/* db migration error dialog */}
+        <AlertDialog isOpen={isMigrationError} closeOnOverlayClick={false}>
+          <AlertDialogBackdrop />
+          <AlertDialogContent>
+            <AlertDialogBody>
+              <VStack space="lg">
+                <Center>
+                  <Entypo name="cross" size={24} color="red" />
+                </Center>
+                <Text className="text-center">
+                  Migration error: {error?.message}.{"\n"}
+                  Please contact support or try again.
                 </Text>
               </VStack>
             </AlertDialogBody>

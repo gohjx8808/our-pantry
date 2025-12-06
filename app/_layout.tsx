@@ -1,30 +1,29 @@
 import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
-import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import "react-native-reanimated";
-import { useColorScheme } from "@/hooks/use-color-scheme";
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-import "@/global.css";
-import * as SQLite from "expo-sqlite";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import Entypo from "@expo/vector-icons/Entypo";
-import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
-import migrations from "../drizzle/migrations";
-import { useEffect, useState } from "react";
-import {
   AlertDialog,
   AlertDialogBackdrop,
   AlertDialogBody,
   AlertDialogContent,
 } from "@/components/ui/alert-dialog";
-import { Text } from "@/components/ui/text";
-import { Spinner } from "@/components/ui/spinner";
-import { VStack } from "@/components/ui/vstack";
 import { Center } from "@/components/ui/center";
+import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
+import { Spinner } from "@/components/ui/spinner";
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
+import "@/global.css";
+import { useColorScheme } from "@/hooks/use-color-scheme";
+import Entypo from "@expo/vector-icons/Entypo";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
+import { Stack } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
+import "react-native-reanimated";
+import migrations from "../drizzle/migrations";
+import { db } from "@/db/utils";
 
 export const unstable_settings = {
   anchor: "(tabs)",
@@ -32,9 +31,6 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-
-  const expo = SQLite.openDatabaseSync("db.db");
-  const db = drizzle(expo);
 
   const { success, error } = useMigrations(db, migrations);
   const [isMigrating, setIsMigrating] = useState(false);
@@ -57,10 +53,14 @@ export default function RootLayout() {
     <GluestackUIProvider mode="dark">
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal", title: "Modal" }}
+            name="index"
+            options={{
+              title: "Items",
+              headerTitleStyle: {
+                fontWeight: "bold",
+              },
+            }}
           />
         </Stack>
         <StatusBar style="auto" />

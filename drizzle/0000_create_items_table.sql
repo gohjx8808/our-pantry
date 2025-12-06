@@ -1,4 +1,4 @@
-CREATE TABLE `users_table` (
+CREATE TABLE `items` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
 	`quantity` integer NOT NULL,
@@ -7,3 +7,5 @@ CREATE TABLE `users_table` (
 	`updated_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL,
 	`created_at` integer DEFAULT (strftime('%s', 'now')) NOT NULL
 );
+--> statement-breakpoint
+CREATE UNIQUE INDEX `items_name_unique` ON `items` (`name`);

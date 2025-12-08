@@ -1,17 +1,24 @@
 import { Text } from "@/components/ui/text";
 import { itemsTable } from "@/db/schema";
 import { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { db } from "@/db/utils";
 import { Card } from "@/components/ui/card";
 import { Image } from "@/components/ui/image";
 import { Heading } from "@/components/ui/heading";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { Fab, FabIcon } from "@/components/ui/fab";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 const Index = () => {
   const [items, setItems] = useState<(typeof itemsTable.$inferSelect)[] | null>(
     null
   );
+
+  const { bottom } = useSafeAreaInsets();
 
   useEffect(() => {
     const testInsert = async () => {
@@ -48,35 +55,40 @@ const Index = () => {
   };
 
   return (
-    <SafeAreaView className="mx-10">
-      {items?.map((item) => (
-        <Card className="p-5 rounded-lg m-3" key={item.id}>
-          <View className="items-center">
-            <Image
-              source={{
-                uri:
-                  item.imageUri ||
-                  "https://thumbs.dreamstime.com/b/no-image-icon-vector-available-picture-symbol-isolated-white-background-suitable-user-interface-element-205805243.jpg",
-              }}
-              className="mb-6 h-[240px] w-full rounded-md"
-              alt="image"
-            />
-          </View>
-          <Heading size="lg" className="mb-4">
-            {item.name}
-          </Heading>
-          <Text size="lg" className="mb-2">
-            Quantity: {item.quantity}
-          </Text>
-          <Text size="lg" className="mb-2">
-            Expiry Date:{" "}
-            <Text className={expiryClass(item.expiryDate)}>
-              {item.expiryDate?.toLocaleDateString()}
+    <>
+      <ScrollView className={`px-6 flex-1 pb-[${bottom}]`}>
+        {items?.map((item) => (
+          <Card className="p-5 rounded-lg m-3" key={item.id}>
+            <View className="items-center">
+              <Image
+                source={{
+                  uri:
+                    item.imageUri ||
+                    "https://thumbs.dreamstime.com/b/no-image-icon-vector-available-picture-symbol-isolated-white-background-suitable-user-interface-element-205805243.jpg",
+                }}
+                className="mb-6 h-[240px] w-full rounded-md"
+                alt="image"
+              />
+            </View>
+            <Heading size="lg" className="mb-4">
+              {item.name}
+            </Heading>
+            <Text size="lg" className="mb-2">
+              Quantity: {item.quantity}
             </Text>
-          </Text>
-        </Card>
-      ))}
-    </SafeAreaView>
+            <Text size="lg" className="mb-2">
+              Expiry Date:{" "}
+              <Text className={expiryClass(item.expiryDate)}>
+                {item.expiryDate?.toLocaleDateString()}
+              </Text>
+            </Text>
+          </Card>
+        ))}
+      </ScrollView>
+      <Fab size="lg">
+        <FabIcon as={() => <FontAwesome5 name="plus" />} />
+      </Fab>
+    </>
   );
 };
 

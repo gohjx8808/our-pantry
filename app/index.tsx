@@ -12,11 +12,13 @@ import { Heading } from "@/components/ui/heading";
 import { ScrollView, View } from "react-native";
 import { Fab, FabIcon } from "@/components/ui/fab";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import AddItemModal from "@/components/modals/AddItemModal";
 
 const Index = () => {
   const [items, setItems] = useState<(typeof itemsTable.$inferSelect)[] | null>(
     null
   );
+  const [isAddItemModalOpen, setIsAddItemModalOpen] = useState(false);
 
   const { bottom } = useSafeAreaInsets();
 
@@ -85,9 +87,16 @@ const Index = () => {
           </Card>
         ))}
       </ScrollView>
-      <Fab size="lg">
+      <Fab size="lg" onPress={() => setIsAddItemModalOpen(true)}>
         <FabIcon as={() => <FontAwesome5 name="plus" />} />
       </Fab>
+      <AddItemModal
+        isOpen={isAddItemModalOpen}
+        onClose={() => setIsAddItemModalOpen(false)}
+        onSubmit={(value) => {
+          console.log(value);
+        }}
+      />
     </>
   );
 };

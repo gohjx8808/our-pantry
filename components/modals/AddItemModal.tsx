@@ -1,5 +1,7 @@
+import addItemSchema, { AddItemFormData } from "@/schemas/addItemSchema";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { zodResolver } from "@hookform/resolvers/zod";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Controller, useForm } from "react-hook-form";
 import { Button, ButtonText } from "../ui/button";
 import {
@@ -20,7 +22,6 @@ import {
   ModalFooter,
   ModalHeader,
 } from "../ui/modal";
-import addItemSchema, { AddItemFormData } from "@/schemas/addItemSchema";
 
 interface AddItemModalProps {
   isOpen: boolean;
@@ -53,7 +54,7 @@ const AddItemModal = (props: AddItemModalProps) => {
         <ModalBody>
           <Controller
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({ field: { onChange, value, onBlur } }) => (
               <FormControl size="md" isInvalid={!!errors.name}>
                 <FormControlLabel>
                   <FormControlLabelText>Name</FormControlLabelText>
@@ -63,6 +64,7 @@ const AddItemModal = (props: AddItemModalProps) => {
                     placeholder="Ingredient Name"
                     value={value}
                     onChangeText={onChange}
+                    onBlur={onBlur}
                   />
                 </Input>
                 <FormControlError>
@@ -76,14 +78,15 @@ const AddItemModal = (props: AddItemModalProps) => {
           />
           <Controller
             control={control}
-            render={({ field: { onChange, value } }) => (
-              <FormControl size="md" isInvalid={!!errors.name}>
+            render={({ field: { onChange, value, onBlur } }) => (
+              <FormControl size="md" isInvalid={!!errors.quantity}>
                 <FormControlLabel>
                   <FormControlLabelText>Quantity</FormControlLabelText>
                 </FormControlLabel>
                 <Input className="my-1" size="md">
                   <InputField
                     placeholder="Quantity"
+                    onBlur={onBlur}
                     value={value.toString()}
                     onChangeText={onChange}
                   />
@@ -96,6 +99,28 @@ const AddItemModal = (props: AddItemModalProps) => {
               </FormControl>
             )}
             name="quantity"
+          />
+          <Controller
+            control={control}
+            render={({ field: { onChange, value, onBlur } }) => (
+              <FormControl size="md" isInvalid={!!errors.expiryDate}>
+                <FormControlLabel>
+                  <FormControlLabelText>Expiry Date</FormControlLabelText>
+                </FormControlLabel>
+                <DateTimePicker
+                  value={value || new Date()}
+                  minimumDate={new Date()}
+                  onChange={(_e, date) => onChange(date)}
+                  onBlur={onBlur}
+                />
+                <FormControlError>
+                  <FormControlErrorText className="text-red-500">
+                    {errors.expiryDate?.message}
+                  </FormControlErrorText>
+                </FormControlError>
+              </FormControl>
+            )}
+            name="expiryDate"
           />
         </ModalBody>
         <ModalFooter>
